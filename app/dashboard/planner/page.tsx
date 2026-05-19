@@ -48,7 +48,7 @@ const SECTIONS = [
     ],
   },
   {
-    title: "Retirement goal",
+    title: "Retirement Goal",
     fields: [
       { name: "desired_monthly_income", label: "Desired monthly income in retirement", placeholder: "4,000", prefix: "$" },
     ],
