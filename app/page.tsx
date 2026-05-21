@@ -75,7 +75,7 @@ export default function LandingPage() {
             <Sparkles className="w-3 h-3" />
             Powered by Claude AI
           </div>
-          <h1 className="text-5xl font-bold text-slate-900 tracking-tight leading-tight max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight max-w-2xl mx-auto">
             Plan your retirement<br />
             <span className="text-[#2563eb]">with AI</span>
           </h1>
@@ -104,7 +104,7 @@ export default function LandingPage() {
         {/* Dashboard preview card */}
         <section className="max-w-5xl mx-auto px-6 pb-16">
           <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden p-6">
-            <div className="grid grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               {[
                 { label: "Projected savings", value: "$1.4M", accent: true },
                 { label: "Monthly surplus",   value: "+$820",  accent: false },
@@ -146,7 +146,7 @@ export default function LandingPage() {
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 text-center mb-8">
             Everything you need
           </p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {FEATURES.map(({ icon: Icon, title, body }) => (
               <div key={title} className="bg-white rounded-xl border border-slate-100 p-5">
                 <div className="w-9 h-9 rounded-lg bg-[#eff6ff] flex items-center justify-center mb-4">
@@ -164,7 +164,7 @@ export default function LandingPage() {
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 text-center mb-8">
             How it works
           </p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {STEPS.map(({ n, title, body }) => (
               <div key={n} className="relative bg-white rounded-xl border border-slate-100 p-5">
                 <div

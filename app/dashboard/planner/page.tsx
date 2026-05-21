@@ -121,7 +121,7 @@ export default function PlannerPage() {
             {SECTIONS.map((section) => (
               <div key={section.title} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 p-5">
                 <p className="text-sm font-semibold text-slate-700 dark:text-white mb-4">{section.title}</p>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {section.fields.map((field) => (
                     <div key={field.name}>
                       <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">

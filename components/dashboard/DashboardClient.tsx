@@ -134,7 +134,7 @@ export function DashboardClient() {
         </div>
 
         {/* Metric cards */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-xl p-5 text-white" style={accentStyle}>
             <p className="text-xs font-medium opacity-75">Projected savings</p>
             <p className="text-3xl font-bold mt-2 tracking-tight">{fmt(projected!)}</p>
@@ -173,8 +173,8 @@ export function DashboardClient() {
         </div>
 
         {/* Chart + Readiness */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="col-span-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 p-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="md:col-span-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 p-5">
             <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-4">Savings projection</p>
             <SavingsChart accentColor="var(--accent)" profile={profile} />
           </div>

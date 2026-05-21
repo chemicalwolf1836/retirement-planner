@@ -93,7 +93,7 @@ export default function ScenariosPage() {
         ) : (
           <>
             {/* 3 scenario cards */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {SCENARIOS.map(({ key, label, rate, pct, color, bg, border, dark, icon: Icon, description }) => {
                 const projected = calcProjectedSavings(profile, rate)
                 const gap = calcRetirementGap(profile)
