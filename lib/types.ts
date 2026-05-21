@@ -16,4 +16,6 @@ export type AIInsights = {
   bull_case: string
   bear_case: string
   recommendations: string[]
+  risk_level: "Low" | "Moderate" | "High" | "Critical"
+  risk_summary: string
 }

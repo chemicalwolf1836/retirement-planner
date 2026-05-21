@@ -41,9 +41,11 @@ Return ONLY a valid JSON object with these exact keys:
 {
   "readiness_score": <number 0-100>,
   "summary": "<2-3 sentence plain English assessment of their retirement outlook>",
-  "bull_case": "<1-2 sentences: what happens if returns average 9-10%>",
-  "bear_case": "<1-2 sentences: what happens if returns average 4-5%>",
-  "recommendations": ["<action 1>", "<action 2>", "<action 3>"]
+  "bull_case": "<2 sentences: what happens if returns average 9-10% — include a specific projected number>",
+  "bear_case": "<2 sentences: what happens if returns average 4-5% — include a specific projected number>",
+  "recommendations": ["<specific action 1 with numbers>", "<specific action 2 with numbers>", "<specific action 3 with numbers>"],
+  "risk_level": "<one of: Low / Moderate / High / Critical>",
+  "risk_summary": "<1-2 sentences explaining the main risk factor in their plan>"
 }
 
 Be specific with numbers. No markdown, no extra text — only the JSON object.`
