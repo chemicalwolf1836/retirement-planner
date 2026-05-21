@@ -33,8 +33,8 @@ export function ScenariosChart({ profile }: { profile: Profile }) {
         <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} tickLine={false} axisLine={false} interval={0} />
         <YAxis tickFormatter={fmtY} tick={{ fontSize: 11, fill: "#94a3b8" }} tickLine={false} axisLine={false} width={52} />
         <Tooltip
-          formatter={(v: number, key: string) => [
-            fmtY(v),
+          formatter={(v, key) => [
+            fmtY(Number(v)),
             key === "conservative" ? "Conservative 4%" : key === "moderate" ? "Moderate 7%" : "Aggressive 10%",
           ]}
           contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", fontSize: 12 }}

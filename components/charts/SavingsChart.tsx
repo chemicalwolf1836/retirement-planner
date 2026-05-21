@@ -38,7 +38,7 @@ export function SavingsChart({ accentColor = "#2563eb", profile }: Props) {
         <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} tickLine={false} axisLine={false} interval={0} />
         <YAxis tickFormatter={fmtY} tick={{ fontSize: 11, fill: "#94a3b8" }} tickLine={false} axisLine={false} width={52} />
         <Tooltip
-          formatter={(v: number, key: string) => [fmtY(v), key === "projected" ? "Projected" : "Target"]}
+          formatter={(v, key) => [fmtY(Number(v)), key === "projected" ? "Projected" : "Target"]}
           contentStyle={{ borderRadius: 8, border: "1px solid #bfdbfe", background: "#eff6ff", fontSize: 12 }}
           labelFormatter={() => ""}
         />

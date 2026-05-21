@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, CheckCircle2 } from "lucide-react"
+import type { Resolver } from "react-hook-form"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { supabase } from "@/lib/supabase"
 
@@ -65,7 +66,7 @@ export default function PlannerPage() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+  } = useForm<FormData>({ resolver: zodResolver(schema) as Resolver<FormData> })
 
   // Load existing profile data
   useEffect(() => {
