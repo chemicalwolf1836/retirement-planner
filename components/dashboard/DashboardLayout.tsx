@@ -89,10 +89,10 @@ export function DashboardLayout({ children, userName = "Batmagnai" }: Props) {
         </nav>
 
         <div className="px-2 pb-4 pt-3 border-t border-slate-200/70 dark:border-slate-700/50 space-y-0.5">
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-700/40 transition-colors">
+          <Link href="/dashboard/settings" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-700/40 transition-colors">
             <Settings className="w-4 h-4 shrink-0" />
             Settings
-          </button>
+          </Link>
           <div className="flex items-center gap-2.5 px-3 py-2">
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: theme.accent }}>
               {initials}
