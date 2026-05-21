@@ -66,8 +66,12 @@ export function DashboardLayout({ children, userName = "Batmagnai" }: Props) {
       <aside className="hidden md:flex w-56 shrink-0 flex-col bg-[#f8fafc] dark:bg-[#1e293b] border-r border-slate-200/70 dark:border-slate-700/50">
         <div className="px-4 pt-5 pb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme.accent }}>
-              <TrendingUp className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: `linear-gradient(135deg, ${theme.accent}, ${theme.dark})` }}>
+              <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="1" strokeOpacity="0.4" fill="white" fillOpacity="0.1"/>
+                <polyline points="3.5,10.5 6,7 8.5,9.5 12.5,5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="10,5 12.5,5 12.5,7.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <span className="text-sm font-semibold text-slate-800 dark:text-white tracking-tight">RetireAI</span>
           </div>
@@ -111,8 +115,12 @@ export function DashboardLayout({ children, userName = "Batmagnai" }: Props) {
         {/* Mobile top bar */}
         <header className="md:hidden flex items-center justify-between px-4 h-14 bg-[#f8fafc] dark:bg-[#1e293b] border-b border-slate-200/70 dark:border-slate-700/50 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme.accent }}>
-              <TrendingUp className="w-3.5 h-3.5 text-white" />
+            <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style={{ background: `linear-gradient(135deg, ${theme.accent}, ${theme.dark})` }}>
+              <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="1" strokeOpacity="0.4" fill="white" fillOpacity="0.1"/>
+                <polyline points="3.5,10.5 6,7 8.5,9.5 12.5,5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="10,5 12.5,5 12.5,7.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <span className="text-sm font-semibold text-slate-800 dark:text-white">RetireAI</span>
           </div>

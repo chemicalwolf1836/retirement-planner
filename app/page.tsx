@@ -48,8 +48,12 @@ export default function LandingPage() {
       <header className="w-full bg-white/80 backdrop-blur-sm border-b border-slate-200/70 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#2563eb] flex items-center justify-center">
-              <TrendingUp className="w-3.5 h-3.5 text-white" />
+            <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #2563eb, #1e3a8a)" }}>
+              <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="1" strokeOpacity="0.4" fill="white" fillOpacity="0.1"/>
+                <polyline points="3.5,10.5 6,7 8.5,9.5 12.5,5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="10,5 12.5,5 12.5,7.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <span className="text-sm font-semibold text-slate-800 tracking-tight">RetireAI</span>
           </div>
@@ -186,8 +190,12 @@ export default function LandingPage() {
       <footer className="border-t border-slate-200 bg-white">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#2563eb] flex items-center justify-center">
-              <TrendingUp className="w-3 h-3 text-white" />
+            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #2563eb, #1e3a8a)" }}>
+              <svg className="w-3 h-3" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="1" strokeOpacity="0.4" fill="white" fillOpacity="0.1"/>
+                <polyline points="3.5,10.5 6,7 8.5,9.5 12.5,5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <polyline points="10,5 12.5,5 12.5,7.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <span className="text-xs font-medium text-slate-500">RetireAI</span>
           </div>
