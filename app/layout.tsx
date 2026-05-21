@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const inter = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });
