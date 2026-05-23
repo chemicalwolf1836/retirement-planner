@@ -11,6 +11,8 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(true)
   const [signingOut, setSigningOut] = useState(false)
+  const [deletingPlan, setDeletingPlan] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [pwLoading, setPwLoading] = useState(false)
@@ -25,6 +27,19 @@ export default function SettingsPage() {
     }
     load()
   }, [router])
+
+  async function handleDeletePlan() {
+    if (!confirmDelete) { setConfirmDelete(true); return }
+    setDeletingPlan(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase.from("ai_reports").delete().eq("user_id", user.id)
+      await supabase.from("profiles").delete().eq("id", user.id)
+    }
+    setDeletingPlan(false)
+    setConfirmDelete(false)
+    router.push("/dashboard/planner")
+  }
 
   async function handleSignOut() {
     setSigningOut(true)
@@ -128,6 +143,27 @@ export default function SettingsPage() {
                   {pwLoading ? "Updating…" : "Update password"}
                 </button>
               </form>
+            </div>
+
+            {/* Delete plan */}
+            <div className="rounded-xl bg-white dark:bg-slate-800 border border-red-100 dark:border-red-900/30 p-5">
+              <p className="text-sm font-semibold text-slate-700 dark:text-white mb-1">Delete plan</p>
+              <p className="text-xs text-slate-400 mb-4">Removes all your financial data and AI reports. This cannot be undone.</p>
+              {confirmDelete && (
+                <p className="text-xs text-red-500 mb-3 font-medium">Are you sure? Press again to confirm.</p>
+              )}
+              <button
+                onClick={handleDeletePlan}
+                disabled={deletingPlan}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  confirmDelete
+                    ? "bg-red-500 text-white hover:bg-red-600"
+                    : "border border-red-200 dark:border-red-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                }`}
+              >
+                {deletingPlan ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                {deletingPlan ? "Deleting…" : confirmDelete ? "Yes, delete everything" : "Delete plan"}
+              </button>
             </div>
 
             {/* Sign out */}
