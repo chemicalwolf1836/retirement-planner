@@ -57,7 +57,9 @@ Be specific with numbers. No markdown, no extra text — only the JSON object.`
     })
 
     const text = message.content[0].type === "text" ? message.content[0].text : ""
-    const insights = JSON.parse(text)
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error("No JSON in response")
+    const insights = JSON.parse(jsonMatch[0])
 
     return NextResponse.json(insights)
   } catch (err) {
