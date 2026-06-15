@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { CheckCircle2, AlertTriangle, Sparkles, TrendingUp, Loader2 } from "lucide-react"
 import { DashboardLayout } from "./DashboardLayout"
 import { supabase } from "@/lib/supabase"
@@ -29,25 +30,51 @@ const READINESS_LABELS = [
 
 const READINESS_COLORS = ["#2563eb", "#f97316", "#2563eb", "#ef4444"]
 
-function readinessBreakdown(score: number) {
-  return [
-    Math.min(100, Math.round(score * 1.1)),
-    Math.min(100, Math.round(score * 0.75)),
-    Math.min(100, Math.round(score * 0.95)),
-    Math.min(100, Math.round(score * 0.55)),
-  ]
+const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
+
+// Each sub-score is derived from real inputs against a sensible target, so the
+// four bars carry independent meaning rather than echoing the overall score.
+function readinessBreakdown(profile: Profile): number[] {
+  // Savings rate: contributions as a share of income, target 15%.
+  const savingsRate = profile.monthly_income > 0
+    ? (profile.monthly_contributions / profile.monthly_income) / 0.15 * 100
+    : 0
+
+  // Pension coverage: how much of desired income the pension already covers.
+  const pensionCoverage = profile.desired_monthly_income > 0
+    ? (profile.expected_pension / profile.desired_monthly_income) * 100
+    : 0
+
+  // Investment growth: share of the projected nest egg that comes from
+  // compounding (i.e. not from the principal already saved or contributed).
+  const months = calcYearsToRetirement(profile) * 12
+  const projected = calcProjectedSavings(profile)
+  const contributed = profile.current_savings + profile.monthly_contributions * months
+  const investmentGrowth = projected > 0
+    ? ((projected - contributed) / projected) * 100
+    : 0
+
+  // Emergency buffer: current savings against 6 months of expenses.
+  const emergencyBuffer = profile.monthly_expenses > 0
+    ? (profile.current_savings / (profile.monthly_expenses * 6)) * 100
+    : 100
+
+  return [savingsRate, pensionCoverage, investmentGrowth, emergencyBuffer].map(clamp)
 }
 
 export function DashboardClient() {
+  const router = useRouter()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [insights, setInsights] = useState<AIInsights | null>(null)
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [loadingAI, setLoadingAI] = useState(false)
+  const [aiError, setAiError] = useState(false)
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoadingProfile(false); return }
+      // Don't show the dashboard shell to a logged-out visitor — send them to login.
+      if (!user) { router.replace("/auth/login"); return }
 
       const { data } = await supabase
         .from("profiles")
@@ -62,17 +89,24 @@ export function DashboardClient() {
       setLoadingProfile(false)
     }
     load()
-  }, [])
+  }, [router])
 
   async function fetchInsights(p: Profile) {
     setLoadingAI(true)
+    setAiError(false)
     try {
       const res = await fetch("/api/ai-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(p),
       })
-      if (res.ok) setInsights(await res.json())
+      if (res.ok) {
+        setInsights(await res.json())
+      } else {
+        setAiError(true)
+      }
+    } catch {
+      setAiError(true)
     } finally {
       setLoadingAI(false)
     }
@@ -83,16 +117,24 @@ export function DashboardClient() {
   const score      = profile ? (insights?.readiness_score ?? calcReadinessScore(profile)) : null
   const surplus    = profile ? calcMonthlySurplus(profile) : null
   const years      = profile ? calcYearsToRetirement(profile) : null
-  const breakdown  = score !== null ? readinessBreakdown(score) : [82, 55, 70, 40]
+  const breakdown  = profile ? readinessBreakdown(profile) : [0, 0, 0, 0]
 
   const accentStyle = { backgroundColor: "var(--accent)" } as React.CSSProperties
 
   if (loadingProfile) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64 gap-2 text-slate-400">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span className="text-sm">Loading…</span>
+        <div className="space-y-4 animate-pulse" aria-busy="true" aria-label="Loading dashboard">
+          <div className="h-7 w-40 rounded bg-slate-100 dark:bg-slate-800" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl p-5 h-28 bg-slate-100 dark:bg-slate-800" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="md:col-span-2 rounded-xl h-56 bg-slate-100 dark:bg-slate-800" />
+            <div className="rounded-xl h-56 bg-slate-100 dark:bg-slate-800" />
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -190,7 +232,14 @@ export function DashboardClient() {
                       {breakdown[i]}%
                     </span>
                   </div>
-                  <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"
+                    role="progressbar"
+                    aria-label={label}
+                    aria-valuenow={breakdown[i]}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
                     <div className="h-full rounded-full" style={{ width: `${breakdown[i]}%`, backgroundColor: READINESS_COLORS[i] }} />
                   </div>
                 </div>
@@ -226,7 +275,19 @@ export function DashboardClient() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-400">Could not load AI insights. Try refreshing.</p>
+            <div className="flex flex-col items-start gap-2 py-1">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {aiError ? "Couldn't generate AI insights right now." : "No insights yet."}
+              </p>
+              <button
+                type="button"
+                onClick={() => fetchInsights(profile)}
+                className="text-sm font-medium underline underline-offset-2"
+                style={{ color: "var(--accent-dark)" }}
+              >
+                Try again
+              </button>
+            </div>
           )}
         </div>
       </div>

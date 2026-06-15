@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import {
   Loader2, Sparkles, TrendingUp, TrendingDown,
-  ShieldCheck, ShieldAlert, RefreshCw, CheckCircle2,
+  ShieldCheck, ShieldAlert, RefreshCw, CheckCircle2, Download,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { supabase } from "@/lib/supabase"
@@ -89,6 +89,46 @@ export default function ReportPage() {
   const scoreColor = (s: number) =>
     s >= 75 ? "#059669" : s >= 50 ? "#d97706" : "#dc2626"
 
+  // Build a Markdown version of the current report and trigger a client-side
+  // download — no server round-trip and no PDF dependency.
+  function downloadReport() {
+    if (!insights) return
+    const dateStr = (generatedAt ?? new Date()).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric",
+    })
+    const md = `# RetireAI Report
+
+_Generated ${dateStr}_
+
+## Readiness score: ${insights.readiness_score}/100
+
+${insights.summary}
+
+## Bull case (9–10% returns)
+
+${insights.bull_case}
+
+## Bear case (4–5% returns)
+
+${insights.bear_case}
+
+## Top action items
+
+${insights.recommendations.map((r, i) => `${i + 1}. ${r}`).join("\n")}
+
+## Risk level: ${insights.risk_level}
+
+${insights.risk_summary}
+`
+    const blob = new Blob([md], { type: "text/markdown" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `retireai-report-${(generatedAt ?? new Date()).toISOString().slice(0, 10)}.md`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <DashboardLayout>
       <div className="max-w-3xl space-y-5">
@@ -104,18 +144,29 @@ export default function ReportPage() {
             </p>
           </div>
           {profile && (
-            <button
-              onClick={generateReport}
-              disabled={generating}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-opacity disabled:opacity-60"
-              style={{ backgroundColor: "var(--accent)" }}
-            >
-              {generating
-                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                : <RefreshCw className="w-3.5 h-3.5" />
-              }
-              {generating ? "Generating…" : insights ? "Regenerate" : "Generate report"}
-            </button>
+            <div className="flex items-center gap-2">
+              {insights && !generating && (
+                <button
+                  onClick={downloadReport}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Download
+                </button>
+              )}
+              <button
+                onClick={generateReport}
+                disabled={generating}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-opacity disabled:opacity-60"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                {generating
+                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  : <RefreshCw className="w-3.5 h-3.5" />
+                }
+                {generating ? "Generating…" : insights ? "Regenerate" : "Generate report"}
+              </button>
+            </div>
           )}
         </div>
 

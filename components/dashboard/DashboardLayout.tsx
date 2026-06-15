@@ -128,13 +128,14 @@ export function DashboardLayout({ children, userName = "Batmagnai" }: Props) {
             {/* Theme dots */}
             <div className="flex items-center gap-1.5">
               {THEMES.map((t) => (
-                <button key={t.name} onClick={() => selectTheme(t)}
+                <button key={t.name} type="button" onClick={() => selectTheme(t)}
+                  aria-label={`${t.name} theme`} aria-pressed={theme.name === t.name}
                   className={`w-4 h-4 rounded-full transition-all ${theme.name === t.name ? "scale-110" : "opacity-40 hover:opacity-80"}`}
                   style={{ backgroundColor: t.accent, boxShadow: theme.name === t.name ? `0 0 0 1.5px white, 0 0 0 3px ${t.accent}` : "none" }}
                 />
               ))}
             </div>
-            <button onClick={toggleDark} className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900 dark:bg-white ml-1">
+            <button type="button" onClick={toggleDark} aria-label="Toggle dark mode" aria-pressed={isDark} className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900 dark:bg-white ml-1">
               {isDark ? <Sun className="w-3.5 h-3.5 text-slate-900" /> : <Moon className="w-3.5 h-3.5 text-white" />}
             </button>
           </div>
@@ -148,13 +149,14 @@ export function DashboardLayout({ children, userName = "Batmagnai" }: Props) {
         <div className="hidden md:flex fixed bottom-0 left-56 right-0 h-14 px-6 items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-200/70 dark:border-slate-700/50">
           <div className="flex items-center gap-2">
             {THEMES.map((t) => (
-              <button key={t.name} onClick={() => selectTheme(t)}
+              <button key={t.name} type="button" onClick={() => selectTheme(t)}
+                aria-label={`${t.name} theme`} aria-pressed={theme.name === t.name}
                 className={`h-4 w-7 rounded-full transition-all ${theme.name === t.name ? "scale-105" : "opacity-40 hover:opacity-80 hover:scale-105"}`}
                 style={{ backgroundColor: t.accent, boxShadow: theme.name === t.name ? `0 0 0 2px white, 0 0 0 3.5px ${t.accent}` : "none" }}
               />
             ))}
           </div>
-          <button onClick={toggleDark} className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900 dark:bg-white transition-all hover:scale-105">
+          <button type="button" onClick={toggleDark} aria-label="Toggle dark mode" aria-pressed={isDark} className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900 dark:bg-white transition-all hover:scale-105">
             {isDark ? <Sun className="w-3.5 h-3.5 text-slate-900" /> : <Moon className="w-3.5 h-3.5 text-white" />}
           </button>
         </div>

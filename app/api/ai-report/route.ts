@@ -8,9 +8,43 @@ import {
   calcYearsToRetirement,
   fmt,
 } from "@/lib/calculations"
-import type { Profile } from "@/lib/types"
+import type { AIInsights, Profile } from "@/lib/types"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+// maxRetries: SDK retries transient errors (429 / 5xx) with backoff.
+// timeout: cap a single request so a hung call can't stall the dashboard.
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  maxRetries: 2,
+  timeout: 30_000,
+})
+
+const RISK_LEVELS = ["Low", "Moderate", "High", "Critical"]
+
+// Narrow unknown JSON into AIInsights; returns null if it doesn't match the
+// shape the UI relies on, so we never hand the client malformed data.
+function parseInsights(raw: string): AIInsights | null {
+  const match = raw.match(/\{[\s\S]*\}/)
+  if (!match) return null
+  let obj: unknown
+  try {
+    obj = JSON.parse(match[0])
+  } catch {
+    return null
+  }
+  if (typeof obj !== "object" || obj === null) return null
+  const o = obj as Record<string, unknown>
+  const ok =
+    typeof o.readiness_score === "number" &&
+    typeof o.summary === "string" &&
+    typeof o.bull_case === "string" &&
+    typeof o.bear_case === "string" &&
+    Array.isArray(o.recommendations) &&
+    o.recommendations.every((r) => typeof r === "string") &&
+    typeof o.risk_level === "string" &&
+    RISK_LEVELS.includes(o.risk_level) &&
+    typeof o.risk_summary === "string"
+  return ok ? (obj as AIInsights) : null
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -56,10 +90,17 @@ Be specific with numbers. No markdown, no extra text — only the JSON object.`
       messages: [{ role: "user", content: prompt }],
     })
 
-    const text = message.content[0].type === "text" ? message.content[0].text : ""
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error("No JSON in response")
-    const insights = JSON.parse(jsonMatch[0])
+    const block = message.content[0]
+    const text = block && block.type === "text" ? block.text : ""
+    const insights = parseInsights(text)
+
+    if (!insights) {
+      // The model replied but not in the shape we need — distinct from a 500.
+      return NextResponse.json(
+        { error: "Could not parse AI response" },
+        { status: 422 },
+      )
+    }
 
     return NextResponse.json(insights)
   } catch (err) {

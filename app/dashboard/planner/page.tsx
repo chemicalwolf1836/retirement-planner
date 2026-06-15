@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,6 +22,9 @@ const schema = z.object({
 }).refine((d) => d.retirement_age > d.current_age, {
   message: "Retirement age must be greater than current age",
   path: ["retirement_age"],
+}).refine((d) => d.monthly_expenses + d.monthly_contributions <= d.monthly_income, {
+  message: "Expenses plus contributions can't exceed your monthly income",
+  path: ["monthly_contributions"],
 })
 
 type FormData = z.infer<typeof schema>
@@ -57,6 +61,7 @@ const SECTIONS = [
 ] as const
 
 export default function PlannerPage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
   const [serverError, setServerError] = useState("")
@@ -72,7 +77,7 @@ export default function PlannerPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
+      if (!user) { router.replace("/auth/login"); return }
 
       const { data } = await supabase
         .from("profiles")
@@ -84,7 +89,7 @@ export default function PlannerPage() {
       setLoading(false)
     }
     load()
-  }, [reset])
+  }, [reset, router])
 
   async function onSubmit(data: FormData) {
     setServerError("")
